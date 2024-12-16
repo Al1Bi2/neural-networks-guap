@@ -1,8 +1,16 @@
 import os
 import shutil
 from sklearn.model_selection import train_test_split
+import zipfile
 
-base_dir = "flowers"
+base_dir = "archive/flowers"
+
+if not os.path.exists(base_dir):
+    print(f"Папка '{base_dir}' не найдена. Разархивируем 'archive.zip'...")
+    with zipfile.ZipFile("archive.zip", "r") as zip_ref:
+        zip_ref.extractall("archive")
+    print("Разархивация завершена.")
+
 train_ratio = 0.8
 
 train_dir = os.path.join(base_dir, "train")
@@ -34,10 +42,10 @@ for category in categories:
     for img in val_images:
         shutil.move(os.path.join(category_path, img), os.path.join(val_category_dir, img))
 
-    print(f"Category '{category}' split: {len(train_images)} train, {len(val_images)} val")
+    print(f"Категория '{category}': {len(train_images)} train, {len(val_images)} val")
 
 for category in categories:
     category_path = os.path.join(base_dir, category)
     if not os.listdir(category_path):
-        print(f"Category '{category}' is empty - delete dir")
+        print(f"Папка '{category}' пустая - удаление.")
         os.rmdir(category_path)
